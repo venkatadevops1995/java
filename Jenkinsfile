@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage("Clone the code") {
+        stage("Clone  code") {
             steps {
                 git 'https://github.com/venkatadevops1995/java.git'
             }

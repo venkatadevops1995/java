@@ -1,19 +1,18 @@
 provider "aws" {
   region     = var.region
   access_key = var.access_key
-  secret_key = var.secret_key  # Adjust the region as needed
+  secret_key = var.secret_key
 }
-
 
 variable "region" {}
 variable "access_key" {}
 variable "secret_key" {}
 variable "vpc_cidr" {}
-variable "subnet_cidr" {}
+variable "public_subnet_cidr" {}
+variable "private_subnet_cidr" {}
 variable "availability_zone" {}
 variable "ami_id" {}
 variable "instance_type" {}
-
 
 # VPC Creation
 resource "aws_vpc" "my_vpc" {
@@ -27,7 +26,7 @@ resource "aws_vpc" "my_vpc" {
 resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = var.public_subnet_cidr
-  availability_zone = "us-east-1a"  # Adjust the availability zone as needed
+  availability_zone = var.availability_zone
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnet"
@@ -38,7 +37,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = var.private_subnet_cidr
-  availability_zone = "us-east-1a"  # Adjust the availability zone as needed
+  availability_zone = var.availability_zone
   tags = {
     Name = "PrivateSubnet"
   }
@@ -74,8 +73,8 @@ resource "aws_route_table_association" "public_route_table_association" {
 
 # EC2 Instance in Public Subnet
 resource "aws_instance" "public_instance" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Adjust to a valid AMI ID for your region
-  instance_type = "t2.micro"
+  ami           = var.ami_id
+  instance_type = var.instance_type
   subnet_id     = aws_subnet.public_subnet.id
 
   tags = {
@@ -85,46 +84,27 @@ resource "aws_instance" "public_instance" {
 
 # EC2 Instance in Private Subnet
 resource "aws_instance" "private_instance" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Adjust to a valid AMI ID for your region
-  instance_type = "t2.micro"
+  ami           = var.ami_id
+  instance_type = var.instance_type
   subnet_id     = aws_subnet.private_subnet.id
 
   tags = {
     Name = "PrivateInstance"
   }
 }
+
 =======================================================================
 
 terraform.tfvars
 
 
-output "vpc_id" {
-  value = aws_vpc.my_vpc.id
-}
-
-output "public_subnet_id" {
-  value = aws_subnet.public_subnet.id
-}
-
-output "private_subnet_id" {
-  value = aws_subnet.private_subnet.id
-}
-
-output "public_instance_id" {
-  value = aws_instance.public_instance.id
-}
-
-output "private_instance_id" {
-  value = aws_instance.private_instance.id
-}
-
-
-region         = "ap-south-1"
-access_key      = "AKIAZQ3DSUODSEHRGI4B"
-secret_key      = "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"
-vpc_cidr        = "10.0.0.0/25"
-subnet_cidr     = "10.0.0.0/26"
-availability_zone = "ap-south-1b"
-ami_id          = "ami-0a4408457f9a03be3"
-instance_type    = "t2.micro"
+region               = "ap-south-1"
+access_key            = "AKIAZQ3DSUODSEHRGI4B"
+secret_key            = "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"
+vpc_cidr              = "10.0.0.0/24"  # Adjusted to be a more standard VPC size
+public_subnet_cidr    = "10.0.0.0/26"
+private_subnet_cidr   = "10.0.1.0/26"  # Changed to avoid overlap
+availability_zone     = "ap-south-1a"  # Adjusted to match the availability zones in the region
+ami_id                = "ami-0a4408457f9a03be3"
+instance_type         = "t2.micro"
 

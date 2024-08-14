@@ -92,19 +92,39 @@ resource "aws_instance" "private_instance" {
     Name = "PrivateInstance"
   }
 }
-
 =======================================================================
 
 terraform.tfvars
 
-
 region               = "ap-south-1"
-access_key            = "AKIAZQ3DSUODSEHRGI4B"
-secret_key            = "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"
+access_key            = "AKIAZQ3DSUOD67HMJXU7"
+secret_key            = "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"
 vpc_cidr              = "10.0.0.0/24"  # Adjusted to be a more standard VPC size
-public_subnet_cidr    = "10.0.0.0/26"
-private_subnet_cidr   = "10.0.1.0/26"  # Changed to avoid overlap
+public_subnet_cidr    = "10.0.0.0/25"
+private_subnet_cidr   = "10.0.0.128/25"  # Changed to avoid overlap
 availability_zone     = "ap-south-1a"  # Adjusted to match the availability zones in the region
 ami_id                = "ami-0a4408457f9a03be3"
 instance_type         = "t2.micro"
+======================================================================================================================================================
 
+============================================================================================================================================================
+newfile.tfvars
+region               = "ap-south-1"
+access_key            = "AKIAZQ3DSUOD67HMJXU7"
+secret_key            = "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"
+vpc_cidr              = "10.0.0.0/24"  # Adjusted to be a more standard VPC size
+public_subnet_cidr    = "10.0.0.0/25"
+private_subnet_cidr   = "10.0.0.128/25"  # Changed to avoid overlap
+availability_zone     = "ap-south-1a"  # Adjusted to match the availability zones in the region
+ami_id                = "ami-0a4408457f9a03be3"
+instance_type         = "t2.micro"
+==============================================================================================================================================================
+command to execute newfile.tfvars
+
+terraform apply -var-file newfile.tfvars 
+======================================================================================================================================
+to destroy only 1 resource
+
+terraform destroy -target resource_type.resource_name
+
+ terraform destroy -target aws_instance.my_instance 
